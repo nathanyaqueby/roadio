@@ -132,7 +132,7 @@ else:
     st.write(f"Lat, Lon: {lat}, {lon}")
 
 
-m.to_streamlit(height=1000, width=1200, scrolling=True)
+m.to_streamlit(scrolling=True)
 
 # mapbox_access_token = st.secrets["mapbox_access_token"]
 

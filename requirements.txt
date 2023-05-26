@@ -4,8 +4,8 @@ seaborn
 pandas
 plotly
 streamlit-folium
-geopy
-leafmap
-osmnx
-networkx
+geopy~=2.2.0
+leafmap~=0.8.2
+osmnx~=1.1.2
+networkx~=2.7.1
 scikit-learn
