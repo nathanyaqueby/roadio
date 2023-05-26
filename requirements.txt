@@ -2,3 +2,4 @@ streamlit
 matplotlib
 seaborn
 pandas
+plotly
