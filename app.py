@@ -50,6 +50,8 @@ authenticator = stauth.Authenticate(
 
 name, authentication_status, username = authenticator.login('Login', 'main')
 
+shortest_paths = []
+
 ############
 def get_location_from_address(address: str):
     from geopy.geocoders import Nominatim
@@ -207,6 +209,13 @@ if st.session_state["authentication_status"]:
         # find the shortest path
         route = find_shortest_path(graph, location_orig, location_dest, optimizer)
 
+        # Append the shortest path to the list
+        shortest_paths.append({
+            'Mode': mode,
+            'Optimizer': optimizer,
+            'Shortest Path': route
+        })
+
         osmnx.plot_route_folium(graph, route, m)
 
     else:
@@ -217,10 +226,16 @@ if st.session_state["authentication_status"]:
 
     m.to_streamlit(scrolling=True)
 
-elif st.session_state["authentication_status"] is False:
-    st.error('Username/password is incorrect')
-elif st.session_state["authentication_status"] is None:
-    st.warning('Please enter your username and password')
+    # Display the dataframe of shortest paths
+    if shortest_paths:
+        df_shortest_paths = pd.DataFrame(shortest_paths)
+        st.subheader("Shortest Paths")
+        st.dataframe(df_shortest_paths)
+
+    elif st.session_state["authentication_status"] is False:
+        st.error('Username/password is incorrect')
+    elif st.session_state["authentication_status"] is None:
+        st.warning('Please enter your username and password')
 
 # mapbox_access_token = st.secrets["mapbox_access_token"]
 
