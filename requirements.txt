@@ -8,3 +8,4 @@ geopy
 leafmap
 osmnx
 networkx
+scikit-learn
