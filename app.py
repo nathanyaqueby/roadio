@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-st.page_config(layout="wide",
+st.set_page_config(layout="wide",
                 initial_sidebar_state="expanded",
                 page_title="Roadio",
                 page_icon="🚗"
