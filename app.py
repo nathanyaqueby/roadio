@@ -63,8 +63,8 @@ def get_graph_from_mode(address_orig: str, address_dest: str, mode: str, city: s
 
 def find_shortest_path(graph: MultiDiGraph, location_orig: Tuple[float], location_dest: Tuple[float], optimizer: str) -> List[int]:
     # find the nearest node to the departure and arrival location
-    node_orig = osmnx.nearest_nodes(graph, location_orig[0], location_orig[1])
-    node_dest = osmnx.nearest_nodes(graph, location_dest[0], location_dest[1])
+    node_orig = osmnx.get_nearest_node(graph, location_orig)
+    node_dest = osmnx.get_nearest_node(graph, location_dest)
 
     route = nx.shortest_path(graph, node_orig, node_dest, weight=optimizer.lower())
     return route
