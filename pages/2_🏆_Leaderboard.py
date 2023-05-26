@@ -1,8 +1,8 @@
 import streamlit as st
 import streamlit_authenticator as stauth
 import pandas as pd
-from awesome_table import AwesomeTable
-from awesome_table.columns import (Column, ColumnDType)
+# from awesome_table import AwesomeTable
+# from awesome_table.columns import (Column, ColumnDType)
 
 st.set_page_config(layout="wide",
                 initial_sidebar_state="expanded",
@@ -82,11 +82,11 @@ sample_data = {
   }
 }
 
-AwesomeTable(pd.json_normalize(sample_data), columns=[
-    Column(name='id', label='ID'),
-    Column(name='name', label='Name'),
-    Column(name='job_title', label='Job Title'),
-    Column(name='avatar', label='Avatar', dtype=ColumnDType.IMAGE),
-    Column(name='_url.social_media', label='Social Media', dtype=ColumnDType.ICONBUTTON, icon='fa-solid fa-share-nodes'), ## From FontAwesome v6.0.0
-    Column(name='_url.document', label='Document', dtype=ColumnDType.DOWNLOAD),
-], show_search=True, show_order=True)
+# AwesomeTable(pd.read_json(sample_data), columns=[
+#     Column(name='id', label='ID'),
+#     Column(name='name', label='Name'),
+#     Column(name='job_title', label='Job Title'),
+#     Column(name='avatar', label='Avatar', dtype=ColumnDType.IMAGE),
+#     Column(name='_url.social_media', label='Social Media', dtype=ColumnDType.ICONBUTTON, icon='fa-solid fa-share-nodes'), ## From FontAwesome v6.0.0
+#     Column(name='_url.document', label='Document', dtype=ColumnDType.DOWNLOAD),
+# ], show_search=True, show_order=True)
