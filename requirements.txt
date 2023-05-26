@@ -11,3 +11,4 @@ networkx~=2.7.1
 scikit-learn
 altair<5.0.0
 streamlit-authenticator
+streamlit-awesome-table
