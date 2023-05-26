@@ -104,12 +104,9 @@ def find_shortest_path(graph: MultiDiGraph, location_orig: Tuple[float], locatio
     # find the nearest node to the departure and arrival location
     node_orig = osmnx.get_nearest_node(graph, location_orig)
     node_dest = osmnx.get_nearest_node(graph, location_dest)
-
-    st.write(f'Nearest node to departure: {node_orig}')
-    st.write(f'Nearest node to arrival: {node_dest}')
     
     route = nx.shortest_path(graph, node_orig, node_dest, weight=optimizer.lower())
-    return route
+    return route, node_orig, node_dest
 
 def clear_text():
     st.session_state["go_from"] = ""
@@ -213,7 +210,10 @@ if st.session_state["authentication_status"]:
         m.add_marker(location=list(location_dest), icon=folium.Icon(color='green', icon='street-view', prefix='fa'), popup=f"{address_dest}")
 
         # find the shortest path
-        route = find_shortest_path(graph, location_orig, location_dest, optimizer)
+        route, node_orig, node_dest = find_shortest_path(graph, location_orig, location_dest, optimizer)
+
+        st.write(f'Nearest node to departure: {node_orig}')
+        st.write(f'Nearest node to arrival: {node_dest}')
 
         # Append the shortest path to the list
         shortest_paths.append({
