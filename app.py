@@ -98,6 +98,11 @@ with st.sidebar:
 
 ############ main
 
+if optimizer == "Distance":
+    optimizer = "Length"
+elif optimizer == "Travel time":
+    optimizer = "Time"
+
 lat, lon = get_location_from_address(address=address_orig)
 
 m = leafmap.Map(center=(lat, lon), zoom=16)
