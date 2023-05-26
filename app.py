@@ -37,7 +37,7 @@ st.set_page_config(layout="wide",
                     'About': "https://www.github.com/nathanyaqueby/roadio/"
                 })
 
-with open('../config.yaml') as file:
+with open('config.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
 
 authenticator = stauth.Authenticate(
