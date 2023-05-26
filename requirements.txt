@@ -9,3 +9,4 @@ leafmap~=0.8.2
 osmnx~=1.1.2
 networkx~=2.7.1
 scikit-learn
+altair<5.0.0
