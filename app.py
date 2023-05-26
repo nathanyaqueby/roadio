@@ -84,16 +84,16 @@ with st.sidebar:
         if basemap in ['Satellite', 'Roadmap', 'Terrain', 'Hybrid', 'OpenStreetMap'][:-1]:
             basemap=basemap.upper()
 
-        st.subheader("Choose your mode of transport")
-        mode = st.selectbox("Mode of transport", ["Car 🚗", "Bike 🚲", "Motorcycle 🛵", "E-Scooter 🛴", "Other"])
+        # st.subheader("Choose your mode of transport")
+        mode = st.selectbox("Mode of transport", ["🚗 Car", "🚲 Bike", "🛵 Motorcycle", "🛴 E-Scooter", "Other"])
         
-        st.subheader("Choose your optimizer")
+        # st.subheader("Choose your optimizer")
         optimizer = st.selectbox("Route optimizer", ["Distance ", "Travel time"])
 
-        st.subheader("Choose your departure location")
+        # st.subheader("Choose your departure location")
         # give radio choices between home, work, or other
         address_options = ["🏠 Home", "🏢 Work", "Other"]
-        address_orig = st.radio("Departure location", address_options, index=2)
+        address_orig = st.radio("Departure location", address_options, index=0)
         if address_orig == "Home":
             address_orig = "Am Kreuzhof 2, Regensburg"
             # write the address in the sidebar
@@ -108,7 +108,7 @@ with st.sidebar:
         
         # do the same for the destination
         # TO-DO: if the user selected "home" for the departure, then the destination is "work" and vice versa
-        st.subheader("Choose your destination")
+        # st.subheader("Choose your destination")
         address_dest = st.radio("Destination", address_options, index=1)
         if address_dest == "Home":
             address_dest = "Am Kreuzhof 2, Regensburg"
