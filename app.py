@@ -9,6 +9,31 @@ st.set_page_config(layout="wide",
                 page_icon="🚗"
                 )
 
+############
+def get_location_from_address(address: str):
+    from geopy.geocoders import Nominatim
+
+    locator = Nominatim(user_agent = "roadio")
+    location = locator.geocode(address)
+
+    return location.latitude, location.longitude
+
+############ sidebar
+
+st.sidebar.header("Insert your home address")
+address = st.sidebar.text_input("Address", "Am Kreuzhof 2, Regensburg")
+
+# get location from address
+lat, lon = get_location_from_address(address)
+
+st.sidebar.header("Insert your work address")
+work_address = st.sidebar.text_input("Address", "Friedrich-Viehbacher-Allee 5, Regensburg")
+
+# get location from address
+work_lat, work_lon = get_location_from_address(work_address)
+
+############ main
+
 mapbox_access_token = st.secrets["mapbox_access_token"]
 
 people_data = pd.read_csv('people-with-addresses.csv')
@@ -62,4 +87,18 @@ fig.update_layout(
     )
 )
 
-st.plotly_chart(fig)
+# add route
+fig.add_trace(go.Scattermapbox(
+        lat=[lat, work_lat],
+        lon=[lon, work_lon],
+        mode='lines',
+        marker=go.scattermapbox.Marker(
+            size=10,
+            color='rgb(60, 255, 60)',
+            opacity=0.7
+        ),
+        text="Route",
+        name="Route"
+    ))
+
+st.plotly_chart(fig, use_container_width=True)
