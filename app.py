@@ -96,13 +96,16 @@ with st.sidebar:
         address_orig = st.radio("Departure location", address_options, index=0)
         if address_orig == "Home":
             address_orig = "Am Kreuzhof 2, Regensburg"
+            icon_orig = folium.Icon(color="green", icon="home")
             # write the address in the sidebar
             st.write(address_orig)
         elif address_orig == "Work":
             address_orig = "Friedrich-Viehbacher-Allee 5, Regensburg"
+            icon_orig = folium.Icon(color="green", icon="briefcase")
             # write the address in the sidebar
             st.write(address_orig)
         else:
+            icon_orig = folium.Icon(color="green", icon="info-sign")
             # user input
             address_orig = st.text_input("Address", "Am Kreuzhof 2, Regensburg")
         
@@ -112,13 +115,16 @@ with st.sidebar:
         address_dest = st.radio("Destination", address_options, index=1)
         if address_dest == "Home":
             address_dest = "Am Kreuzhof 2, Regensburg"
+            icon_dest = folium.Icon(color="red", icon="home")
             # write the address in the sidebar
             st.write(address_dest)
         elif address_dest == "Work":
             address_dest = "Friedrich-Viehbacher-Allee 5, Regensburg"
+            icon_dest = folium.Icon(color="red", icon="briefcase")
             # write the address in the sidebar
             st.write(address_dest)
         else:
+            icon_dest = folium.Icon(color="red", icon="info-sign")
             # user input
             address_dest = st.text_input("Address", "Friedrich-Viehbacher-Allee 5, Regensburg")
 
@@ -148,7 +154,7 @@ if submit_button and address_orig and address_dest:
     # Search information 
     st.markdown(f'**From**: {address_orig}')
     st.markdown(f'**To**: {address_dest}')
-    st.write(graph)
+    # st.write(graph)
 
     # re-center
     leafmap.Map(center=location_orig, zoom=16)
@@ -165,7 +171,7 @@ if submit_button and address_orig and address_dest:
 else:
 
     m.add_marker(location=(lat, lon), popup=f"lat, lon: {lat}, {lon}", icon=folium.Icon(color='green', icon='eye', prefix='fa'))
-    st.write(f"Lat, Lon: {lat}, {lon}")
+    # st.write(f"Lat, Lon: {lat}, {lon}")
 
 
 m.to_streamlit(scrolling=True)
