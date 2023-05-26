@@ -10,6 +10,19 @@ import leafmap.foliumap as leafmap
 from typing import Tuple, List
 from networkx.classes.multidigraph import MultiDiGraph
 
+def login():
+    st.title("User Login")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    login_button = st.button("Login")
+
+    if login_button:
+        if username == "admin" and password == "password":
+            st.success("Logged in successfully!")
+            # Continue with the application logic after successful login
+        else:
+            st.error("Invalid username or password")
+
 st.set_page_config(layout="wide",
                 initial_sidebar_state="expanded",
                 page_title="Roadio",
