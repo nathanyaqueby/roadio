@@ -72,6 +72,10 @@ def find_shortest_path(graph: MultiDiGraph, location_orig: Tuple[float], locatio
 def clear_text():
     st.session_state["go_from"] = ""
     st.session_state["go_to"] = ""
+
+# Define lists to store the shortest paths
+shortest_paths = []
+
 ############ sidebar
 
 with st.sidebar:
@@ -129,6 +133,13 @@ if submit_button and address_orig and address_dest:
     # find the shortest path
     route = find_shortest_path(graph, location_orig, location_dest, optimizer)
 
+    # Append the shortest path to the list
+    shortest_paths.append({
+        'Mode': mode,
+        'Optimizer': optimizer,
+        'Shortest Path': route
+    })
+
     osmnx.plot_route_folium(graph, route, m)
 
 else:
@@ -138,6 +149,12 @@ else:
 
 
 m.to_streamlit(scrolling=True)
+
+# Display the dataframe of shortest paths
+if shortest_paths:
+    df_shortest_paths = pd.DataFrame(shortest_paths)
+    st.subheader("Shortest Paths")
+    st.dataframe(df_shortest_paths)
 
 # mapbox_access_token = st.secrets["mapbox_access_token"]
 
