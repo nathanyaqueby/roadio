@@ -73,31 +73,56 @@ def clear_text():
     st.session_state["go_from"] = ""
     st.session_state["go_to"] = ""
 
-# Define lists to store the shortest paths
-shortest_paths = []
-
 ############ sidebar
 
 with st.sidebar:
 
     with st.form(key='generate_route'):
-        st.header("Generate your route")
+        st.title("Generate your route with Roadio")
 
         basemap = st.selectbox("Choose basemap", ['Satellite', 'Roadmap', 'Terrain', 'Hybrid', 'OpenStreetMap'])
         if basemap in ['Satellite', 'Roadmap', 'Terrain', 'Hybrid', 'OpenStreetMap'][:-1]:
             basemap=basemap.upper()
 
         st.subheader("Choose your mode of transport")
-        mode = st.selectbox("Mode", ["Car", "Bike", "Motorcycle", "E-Scooter", "Other"])
+        mode = st.selectbox("Mode of transport", ["Car 🚗", "Bike 🚲", "Motorcycle 🛵", "E-Scooter 🛴", "Other"])
         
         st.subheader("Choose your optimizer")
-        optimizer = st.selectbox("Optimizer", ["Distance", "Travel time"])
+        optimizer = st.selectbox("Route optimizer", ["Distance ", "Travel time"])
 
         st.subheader("Choose your departure location")
-        address_orig = st.text_input("Address", "Am Kreuzhof 2, Regensburg")
+        # give radio choices between home, work, or other
+        address_options = ["🏠 Home", "🏢 Work", "Other"]
+        address_orig = st.radio("Departure location", address_options, index=2)
+        if address_orig == "Home":
+            address_orig = "Am Kreuzhof 2, Regensburg"
+            # write the address in the sidebar
+            st.write(address_orig)
+        elif address_orig == "Work":
+            address_orig = "Friedrich-Viehbacher-Allee 5, Regensburg"
+            # write the address in the sidebar
+            st.write(address_orig)
+        else:
+            # user input
+            address_orig = st.text_input("Address", "Am Kreuzhof 2, Regensburg")
         
-        st.subheader("Choose your destination location")
-        address_dest = st.text_input("Address", "Friedrich-Viehbacher-Allee 5, Regensburg")
+        # do the same for the destination
+        # TO-DO: if the user selected "home" for the departure, then the destination is "work" and vice versa
+        st.subheader("Choose your destination")
+        address_dest = st.radio("Destination", address_options, index=1)
+        if address_dest == "Home":
+            address_dest = "Am Kreuzhof 2, Regensburg"
+            # write the address in the sidebar
+            st.write(address_dest)
+        elif address_dest == "Work":
+            address_dest = "Friedrich-Viehbacher-Allee 5, Regensburg"
+            # write the address in the sidebar
+            st.write(address_dest)
+        else:
+            # user input
+            address_dest = st.text_input("Address", "Friedrich-Viehbacher-Allee 5, Regensburg")
+
+        # submit button
         submit_button = st.form_submit_button(label='Generate route')
 
 ############ main
@@ -133,13 +158,6 @@ if submit_button and address_orig and address_dest:
     # find the shortest path
     route = find_shortest_path(graph, location_orig, location_dest, optimizer)
 
-    # Append the shortest path to the list
-    shortest_paths.append({
-        'Mode': mode,
-        'Optimizer': optimizer,
-        'Shortest Path': route
-    })
-
     osmnx.plot_route_folium(graph, route, m)
 
 else:
@@ -149,12 +167,6 @@ else:
 
 
 m.to_streamlit(scrolling=True)
-
-# Display the dataframe of shortest paths
-if shortest_paths:
-    df_shortest_paths = pd.DataFrame(shortest_paths)
-    st.subheader("Shortest Paths")
-    st.dataframe(df_shortest_paths)
 
 # mapbox_access_token = st.secrets["mapbox_access_token"]
 
