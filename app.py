@@ -102,6 +102,9 @@ def find_shortest_path(graph: MultiDiGraph, location_orig: Tuple[float], locatio
     node_orig = osmnx.get_nearest_node(graph, location_orig)
     node_dest = osmnx.get_nearest_node(graph, location_dest)
 
+    st.write(f'Nearest node to departure: {node_orig}')
+    st.write(f'Nearest node to arrival: {node_dest}')
+    
     route = nx.shortest_path(graph, node_orig, node_dest, weight=optimizer.lower())
     return route
 
