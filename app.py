@@ -129,11 +129,14 @@ with st.sidebar:
             address_dest = st.text_input("Address", "Friedrich-Viehbacher-Allee 5, Regensburg")
 
         # submit button
-        submit_button = st.form_submit_button(label='Generate route')
+        submit_button = st.form_submit_button(label='Generate route',
+                                              help='Click to generate your route',
+                                              type='primary',
+                                              use_container_width=True)
 
 ############ main
 
-st.title("Roadio - Your all-encompassing sustainable route planner")
+st.title("Roadio: Your all-encompassing sustainable route planner")
 
 if optimizer == "Distance":
     optimizer = "Length"
@@ -152,16 +155,16 @@ if submit_button and address_orig and address_dest:
     graph, location_orig, location_dest = get_graph(address_orig, address_dest)
 
     # Search information 
-    st.markdown(f'**From**: {address_orig}')
-    st.markdown(f'**To**: {address_dest}')
+    # st.markdown(f'**From**: {address_orig}')
+    # st.markdown(f'**To**: {address_dest}')
     # st.write(graph)
 
     # re-center
     leafmap.Map(center=location_orig, zoom=16)
 
     # find the nearest node to the start location
-    m.add_marker(location=list(location_orig), icon=folium.Icon(color='red', icon='suitcase', prefix='fa'))
-    m.add_marker(location=list(location_dest), icon=folium.Icon(color='green', icon='street-view', prefix='fa'))
+    m.add_marker(location=list(location_orig), icon=folium.Icon(color='red', icon='suitcase', prefix='fa'), popup=f"{address_orig}")
+    m.add_marker(location=list(location_dest), icon=folium.Icon(color='green', icon='street-view', prefix='fa'), popup=f"{address_dest}")
 
     # find the shortest path
     route = find_shortest_path(graph, location_orig, location_dest, optimizer)
