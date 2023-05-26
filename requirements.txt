@@ -3,3 +3,8 @@ matplotlib
 seaborn
 pandas
 plotly
+streamlit-folium
+geopy
+leafmap
+osmnx
+networkx
