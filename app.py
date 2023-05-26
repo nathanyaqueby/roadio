@@ -53,6 +53,7 @@ name, authentication_status, username = authenticator.login('Login', 'main')
 shortest_paths = []
 
 ############
+@st.cache
 def get_location_from_address(address: str):
     from geopy.geocoders import Nominatim
 
@@ -61,6 +62,7 @@ def get_location_from_address(address: str):
 
     return location.latitude, location.longitude
 
+@st.cache
 def get_graph(address_orig: str, address_dest: str):
 
     MARGIN = 0.1
@@ -81,7 +83,7 @@ def get_graph(address_orig: str, address_dest: str):
 
     return graph, location_orig, location_dest
 
-
+@st.cache
 def get_graph_from_mode(address_orig: str, address_dest: str, mode: str, city: str="Brussels", dist: float=1000.):
 
     assert mode in ['place', 'address']
@@ -97,6 +99,7 @@ def get_graph_from_mode(address_orig: str, address_dest: str, mode: str, city: s
 
     return graph, location_orig, location_dest
 
+@st.cache
 def find_shortest_path(graph: MultiDiGraph, location_orig: Tuple[float], location_dest: Tuple[float], optimizer: str) -> List[int]:
     # find the nearest node to the departure and arrival location
     node_orig = osmnx.get_nearest_node(graph, location_orig)
