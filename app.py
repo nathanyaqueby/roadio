@@ -10,6 +10,8 @@ import networkx as nx
 import leafmap.foliumap as leafmap
 from typing import Tuple, List
 from networkx.classes.multidigraph import MultiDiGraph
+from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut
 
 import streamlit_authenticator as stauth
 import yaml
@@ -56,14 +58,16 @@ shortest_paths = []
 ############
 
 def get_location_from_address(address: str):
-    from geopy.geocoders import Nominatim
 
-    locator = Nominatim(user_agent = "roadio")
-    location = locator.geocode(address)
+    try:
+        locator = Nominatim(user_agent = "roadio")
+        location = locator.geocode(address)
+    except GeocoderTimedOut:
+        return get_location_from_address(address)
 
     return location.latitude, location.longitude
 
-
+st.cache()
 def get_graph(address_orig: str, address_dest: str):
 
     MARGIN = 0.1
