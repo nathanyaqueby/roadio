@@ -11,10 +11,10 @@ st.set_page_config(layout="wide",
 
 mapbox_access_token = st.secrets["mapbox_access_token"]
 
-people_data = pd.read_csv('data\people-with-addresses.csv')
+people_data = pd.read_csv('people-with-addresses.csv')
 people_data['full_name'] = people_data[['first_name','last_name']].apply(lambda x: ' '.join(x), axis=1)
 
-company_data = pd.read_csv('data\ratisbona-companies.csv')
+company_data = pd.read_csv('ratisbona-companies.csv')
 
 fig = go.Figure()
 
