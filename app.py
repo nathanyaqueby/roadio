@@ -1,3 +1,4 @@
+import sys
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -215,7 +216,7 @@ if st.session_state["authentication_status"]:
         st.write(f'Nearest node to departure: {node_orig}')
         st.write(f'Nearest node to arrival: {node_dest}')
 
-        print(node_orig, node_dest)
+        print(node_orig, node_dest, file=sys.stderr)
 
         # Append the shortest path to the list
         shortest_paths.append({
