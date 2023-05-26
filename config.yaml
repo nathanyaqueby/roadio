@@ -1,0 +1,17 @@
+credentials:
+  usernames:
+    nqueby:
+      email: nathanyaqueby21@gmail.com
+      name: Nathanya Queby
+      password: $2b$12$WoSq9CU.SiRAijipADGw0u6Gf.1W9ayQkvD4EEjyFmOc6SxeXmHAG # To be replaced with hashed password
+    harihk:
+      email: harikesavankrishnan@gmail.com
+      name: Hari Kesavan
+      password: $2b$12$IMT/UHmdqJyqV72tdiVCP.eTVE6mL19RqF16Pg/ThV8xMruc3zWq. # To be replaced with hashed password
+cookie:
+  expiry_days: 30
+  key: some_signature_key # Must be string
+  name: some_cookie_name
+preauthorized:
+  emails:
+  - nathanyaqueby@yahoo.com

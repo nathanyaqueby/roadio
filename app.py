@@ -10,6 +10,10 @@ import leafmap.foliumap as leafmap
 from typing import Tuple, List
 from networkx.classes.multidigraph import MultiDiGraph
 
+import streamlit_authenticator as stauth
+import yaml
+from yaml.loader import SafeLoader
+
 st.set_page_config(layout="wide",
                 initial_sidebar_state="expanded",
                 page_title="Roadio",
@@ -19,6 +23,19 @@ st.set_page_config(layout="wide",
                     'Report a bug': "https://www.github.com/nathanyaqueby/roadio/issues",
                     'About': "https://www.github.com/nathanyaqueby/roadio/"
                 })
+
+with open('../config.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
+
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['preauthorized']
+)
+
+name, authentication_status, username = authenticator.login('Login', 'main')
 
 ############
 def get_location_from_address(address: str):
@@ -79,109 +96,118 @@ def clear_text():
 
 ############ sidebar
 
-with st.sidebar:
+if st.session_state["authentication_status"]:
+    authenticator.logout('Logout', 'main', key='unique_key')
+    st.write(f'Welcome *{st.session_state["name"]}*!')
+    
+    with st.sidebar:
 
-    with st.form(key='generate_route'):
-        st.title("Generate your route")
+        with st.form(key='generate_route'):
+            st.title("Generate your route")
 
-        basemap = st.selectbox("Choose basemap", ['Satellite', 'Roadmap', 'Terrain', 'Hybrid', 'OpenStreetMap'])
-        if basemap in ['Satellite', 'Roadmap', 'Terrain', 'Hybrid', 'OpenStreetMap'][:-1]:
-            basemap=basemap.upper()
+            basemap = st.selectbox("Choose basemap", ['Satellite', 'Roadmap', 'Terrain', 'Hybrid', 'OpenStreetMap'])
+            if basemap in ['Satellite', 'Roadmap', 'Terrain', 'Hybrid', 'OpenStreetMap'][:-1]:
+                basemap=basemap.upper()
 
-        # st.subheader("Choose your mode of transport")
-        mode = st.selectbox("Mode of transport", ["🚗 Car", "🚲 Bike", "🛵 Motorcycle", "🛴 E-Scooter", "Other"])
-        
-        # st.subheader("Choose your optimizer")
-        optimizer = st.selectbox("Route optimizer", ["Distance ", "Travel time"])
+            # st.subheader("Choose your mode of transport")
+            mode = st.selectbox("Mode of transport", ["🚗 Car", "🚲 Bike", "🛵 Motorcycle", "🛴 E-Scooter", "Other"])
+            
+            # st.subheader("Choose your optimizer")
+            optimizer = st.selectbox("Route optimizer", ["Distance ", "Travel time"])
 
-        # st.subheader("Choose your departure location")
-        # give radio choices between home, work, or other
-        address_options = ["🏠 Home", "🏢 Work", "Other"]
-        address_orig = st.radio("Departure location", address_options, index=0)
-        if address_orig == "Home":
-            address_orig = "Am Kreuzhof 2, Regensburg"
-            icon_orig = folium.Icon(color="green", icon="home")
-            # write the address in the sidebar
-            st.write(address_orig)
-        elif address_orig == "Work":
-            address_orig = "Friedrich-Viehbacher-Allee 5, Regensburg"
-            icon_orig = folium.Icon(color="green", icon="briefcase")
-            # write the address in the sidebar
-            st.write(address_orig)
-        else:
-            icon_orig = folium.Icon(color="green", icon="info-sign")
-            # user input
-            address_orig = st.text_input("Address", "Am Kreuzhof 2, Regensburg")
-        
-        # do the same for the destination
-        # TO-DO: if the user selected "home" for the departure, then the destination is "work" and vice versa
-        # st.subheader("Choose your destination")
-        address_dest = st.radio("Destination", address_options, index=1)
-        if address_dest == "Home":
-            address_dest = "Am Kreuzhof 2, Regensburg"
-            icon_dest = folium.Icon(color="red", icon="home")
-            # write the address in the sidebar
-            st.write(address_dest)
-        elif address_dest == "Work":
-            address_dest = "Friedrich-Viehbacher-Allee 5, Regensburg"
-            icon_dest = folium.Icon(color="red", icon="briefcase")
-            # write the address in the sidebar
-            st.write(address_dest)
-        else:
-            icon_dest = folium.Icon(color="red", icon="info-sign")
-            # user input
-            address_dest = st.text_input("Address", "Friedrich-Viehbacher-Allee 5, Regensburg")
+            # st.subheader("Choose your departure location")
+            # give radio choices between home, work, or other
+            address_options = ["🏠 Home", "🏢 Work", "Other"]
+            address_orig = st.radio("Departure location", address_options, index=0)
+            if address_orig == "Home":
+                address_orig = "Am Kreuzhof 2, Regensburg"
+                icon_orig = folium.Icon(color="green", icon="home")
+                # write the address in the sidebar
+                st.write(address_orig)
+            elif address_orig == "Work":
+                address_orig = "Friedrich-Viehbacher-Allee 5, Regensburg"
+                icon_orig = folium.Icon(color="green", icon="briefcase")
+                # write the address in the sidebar
+                st.write(address_orig)
+            else:
+                icon_orig = folium.Icon(color="green", icon="info-sign")
+                # user input
+                address_orig = st.text_input("Address", "Am Kreuzhof 2, Regensburg")
+            
+            # do the same for the destination
+            # TO-DO: if the user selected "home" for the departure, then the destination is "work" and vice versa
+            # st.subheader("Choose your destination")
+            address_dest = st.radio("Destination", address_options, index=1)
+            if address_dest == "Home":
+                address_dest = "Am Kreuzhof 2, Regensburg"
+                icon_dest = folium.Icon(color="red", icon="home")
+                # write the address in the sidebar
+                st.write(address_dest)
+            elif address_dest == "Work":
+                address_dest = "Friedrich-Viehbacher-Allee 5, Regensburg"
+                icon_dest = folium.Icon(color="red", icon="briefcase")
+                # write the address in the sidebar
+                st.write(address_dest)
+            else:
+                icon_dest = folium.Icon(color="red", icon="info-sign")
+                # user input
+                address_dest = st.text_input("Address", "Friedrich-Viehbacher-Allee 5, Regensburg")
 
-        # submit button
-        submit_button = st.form_submit_button(label='Generate route',
-                                              help='Click to generate your route',
-                                              type='primary',
-                                              use_container_width=True)
+            # submit button
+            submit_button = st.form_submit_button(label='Generate route',
+                                                help='Click to generate your route',
+                                                type='primary',
+                                                use_container_width=True)
 
-############ main
+    ############ main
 
-st.title("Roadio: Your all-encompassing sustainable route planner")
+    st.title("Roadio: Your all-encompassing sustainable route planner")
 
-if optimizer == "Distance":
-    optimizer = "Length"
-elif optimizer == "Travel time":
-    optimizer = "Time"
+    if optimizer == "Distance":
+        optimizer = "Length"
+    elif optimizer == "Travel time":
+        optimizer = "Time"
 
-lat, lon = get_location_from_address(address=address_orig)
+    lat, lon = get_location_from_address(address=address_orig)
 
-m = leafmap.Map(center=(lat, lon), zoom=16)
+    m = leafmap.Map(center=(lat, lon), zoom=16)
 
-m.add_basemap(basemap)
+    m.add_basemap(basemap)
 
-if submit_button and address_orig and address_dest:
+    if submit_button and address_orig and address_dest:
 
-    # Find the route
-    graph, location_orig, location_dest = get_graph(address_orig, address_dest)
+        # Find the route
+        graph, location_orig, location_dest = get_graph(address_orig, address_dest)
 
-    # Search information 
-    # st.markdown(f'**From**: {address_orig}')
-    # st.markdown(f'**To**: {address_dest}')
-    # st.write(graph)
+        # Search information 
+        # st.markdown(f'**From**: {address_orig}')
+        # st.markdown(f'**To**: {address_dest}')
+        # st.write(graph)
 
-    # re-center
-    leafmap.Map(center=location_orig, zoom=16)
+        # re-center
+        leafmap.Map(center=location_orig, zoom=16)
 
-    # find the nearest node to the start location
-    m.add_marker(location=list(location_orig), icon=folium.Icon(color='red', icon='suitcase', prefix='fa'), popup=f"{address_orig}")
-    m.add_marker(location=list(location_dest), icon=folium.Icon(color='green', icon='street-view', prefix='fa'), popup=f"{address_dest}")
+        # find the nearest node to the start location
+        m.add_marker(location=list(location_orig), icon=folium.Icon(color='red', icon='suitcase', prefix='fa'), popup=f"{address_orig}")
+        m.add_marker(location=list(location_dest), icon=folium.Icon(color='green', icon='street-view', prefix='fa'), popup=f"{address_dest}")
 
-    # find the shortest path
-    route = find_shortest_path(graph, location_orig, location_dest, optimizer)
+        # find the shortest path
+        route = find_shortest_path(graph, location_orig, location_dest, optimizer)
 
-    osmnx.plot_route_folium(graph, route, m)
+        osmnx.plot_route_folium(graph, route, m)
 
-else:
+    else:
 
-    m.add_marker(location=(lat, lon), popup=f"lat, lon: {lat}, {lon}", icon=folium.Icon(color='green', icon='eye', prefix='fa'))
-    # st.write(f"Lat, Lon: {lat}, {lon}")
+        m.add_marker(location=(lat, lon), popup=f"lat, lon: {lat}, {lon}", icon=folium.Icon(color='green', icon='eye', prefix='fa'))
+        # st.write(f"Lat, Lon: {lat}, {lon}")
 
 
-m.to_streamlit(scrolling=True)
+    m.to_streamlit(scrolling=True)
+
+elif st.session_state["authentication_status"] is False:
+    st.error('Username/password is incorrect')
+elif st.session_state["authentication_status"] is None:
+    st.warning('Please enter your username and password')
 
 # mapbox_access_token = st.secrets["mapbox_access_token"]
 
