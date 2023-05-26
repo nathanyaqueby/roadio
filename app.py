@@ -78,7 +78,7 @@ def clear_text():
 with st.sidebar:
 
     with st.form(key='generate_route'):
-        st.title("Generate your route with Roadio")
+        st.title("Generate your route")
 
         basemap = st.selectbox("Choose basemap", ['Satellite', 'Roadmap', 'Terrain', 'Hybrid', 'OpenStreetMap'])
         if basemap in ['Satellite', 'Roadmap', 'Terrain', 'Hybrid', 'OpenStreetMap'][:-1]:
@@ -126,6 +126,8 @@ with st.sidebar:
         submit_button = st.form_submit_button(label='Generate route')
 
 ############ main
+
+st.title("Roadio - Your all-encompassing sustainable route planner")
 
 if optimizer == "Distance":
     optimizer = "Length"
