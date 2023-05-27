@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 import streamlit_authenticator as stauth
 from streamlit_card import card
+
 # from awesome_table import AwesomeTable
 # from awesome_table.columns import (Column, ColumnDType)
 from streamlit_extras.app_logo import add_logo

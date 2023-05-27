@@ -64,109 +64,117 @@ with st.sidebar:
     # add image at the bottom
     st.image("media/turm transparent.png", use_column_width=True)
 
-
-with open("config.yaml") as file:
-    config = yaml.load(file, Loader=SafeLoader)
-
-authenticator = stauth.Authenticate(
-    config["credentials"],
-    config["cookie"]["name"],
-    config["cookie"]["key"],
-    config["cookie"]["expiry_days"],
-    config["preauthorized"],
-)
-name, authentication_status, username = authenticator.login("Login", "main")
-user_data = pd.read_csv("data/people-with-companies-clean.csv")
-
-
-###################### helper ######################
-def get_location_from_address(address: str):
-    try:
-        locator = Nominatim(user_agent="roadio")
-        location = locator.geocode(address)
-    except GeocoderTimedOut:
-        return get_location_from_address(address)
-
-    return location.latitude, location.longitude
-
-
-###################### main ######################
-
 try:
-    user_infomration = user_data.loc[
-        (user_data["first_name"] == name.split(" ")[0])
-        & (user_data["last_name"] == name.split(" ")[1])
-    ]
+    with open("config.yaml") as file:
+        config = yaml.load(file, Loader=SafeLoader)
+
+    authenticator = stauth.Authenticate(
+        config["credentials"],
+        config["cookie"]["name"],
+        config["cookie"]["key"],
+        config["cookie"]["expiry_days"],
+        config["preauthorized"],
+    )
+    name, authentication_status, username = authenticator.login("Login", "main")
+    user_data = pd.read_csv("data/people-with-companies-clean.csv")
+
+    ###################### helper ######################
+    def get_location_from_address(address: str):
+        try:
+            locator = Nominatim(user_agent="roadio")
+            location = locator.geocode(address)
+        except GeocoderTimedOut:
+            return get_location_from_address(address)
+
+        return location.latitude, location.longitude
+
+    ###################### main ######################
+
+    try:
+        user_infomration = user_data.loc[
+            (user_data["first_name"] == name.split(" ")[0])
+            & (user_data["last_name"] == name.split(" ")[1])
+        ]
+    except Exception as e:
+        pass
+
+    def get_distance(origin, destination):
+        return ox.distance.great_circle_vec(*origin, *destination)
+
+    st.cache(allow_output_mutation=True)
+    with st.spinner(text="In progress..."):
+        center_origin = (
+            user_infomration["lat"].values[0],
+            user_infomration["lon"].values[0],
+        )
+        center_origin_company = (
+            user_infomration["lat_company"].values[0],
+            user_infomration["lon_company"].values[0],
+        )
+        driver_distaance = get_distance(center_origin, center_origin_company)
+
+        for data in user_data.iterrows():
+            user_data["distance_from_driver"] = get_distance(
+                center_origin, (user_data["lat"], user_data["lon"])
+            )
+            user_data["distance_from_dest"] = get_distance(
+                (user_data["lat"], user_data["lon"]),
+                (user_data["lat_company"], user_data["lon_company"]),
+            )
+            user_data["distance_dest"] = get_distance(
+                center_origin_company,
+                (user_data["lat_company"], user_data["lon_company"]),
+            )
+        user_data = user_data[user_data["distance_from_driver"] > driver_distaance]
+
+        # filter out the driver
+        car_pool_user = user_data.sort_values(
+            ["distance_from_driver", "distance_dest"], ascending=[False, False]
+        ).iloc[1 : open_seats + 1, :]
+
+        # print all the matches
+        st.write(car_pool_user)
+
+        m = leafmap.Map(
+            center=(
+                user_infomration["lat"].values[0],
+                user_infomration["lon"].values[0],
+            ),
+            zoom=12,
+        )
+        m.add_basemap("Satellite")
+
+        # add marker for the origin
+        m.add_marker(
+            location=(
+                user_infomration["lat"].values[0],
+                user_infomration["lon"].values[0],
+            ),
+            popup="Origin",
+            icon=folium.Icon(color="green", icon="home"),
+        )
+
+        # add marker for the destination
+        m.add_marker(
+            location=(
+                user_infomration["lat_company"].values[0],
+                user_infomration["lon_company"].values[0],
+            ),
+            popup="Destination",
+            icon=folium.Icon(color="red", icon="flag"),
+        )
+
+        # add markers for each latitute and longitude in car_pool_user
+        for data in car_pool_user.iterrows():
+            m.add_marker(
+                location=(data[1]["lat"], data[1]["lon"]),
+                popup=data[1]["first_name"]
+                + " "
+                + data[1]["last_name"]
+                + " "
+                + data[1]["address_company"],
+            )
+
+        m.to_streamlit(scrolling=True)
 except Exception as e:
     pass
-
-
-def get_distance(origin, destination):
-    return ox.distance.great_circle_vec(*origin, *destination)
-
-
-center_origin = user_infomration["lat"].values[0], user_infomration["lon"].values[0]
-center_origin_company = (
-    user_infomration["lat_company"].values[0],
-    user_infomration["lon_company"].values[0],
-)
-driver_distaance = get_distance(center_origin, center_origin_company)
-# st.write(driver_distaance)
-
-for data in user_data.iterrows():
-    user_data["distance_from_driver"] = get_distance(
-        center_origin, (user_data["lat"], user_data["lon"])
-    )
-    user_data["distance_from_dest"] = get_distance(
-        (user_data["lat"], user_data["lon"]),
-        (user_data["lat_company"], user_data["lon_company"]),
-    )
-    user_data["distance_dest"] = get_distance(
-        center_origin_company, (user_data["lat_company"], user_data["lon_company"])
-    )
-user_data = user_data[user_data["distance_from_driver"] > driver_distaance]
-
-
-# filter out the driver
-car_pool_user = user_data.sort_values(
-    ["distance_from_driver", "distance_dest"], ascending=[False, False]
-).iloc[1 : open_seats + 1, :]
-
-# print all the matches
-st.write(car_pool_user)
-
-m = leafmap.Map(
-    center=(user_infomration["lat"].values[0], user_infomration["lon"].values[0]),
-    zoom=12,
-)
-m.add_basemap("Satellite")
-
-# add marker for the origin
-m.add_marker(
-    location=(user_infomration["lat"].values[0], user_infomration["lon"].values[0]),
-    popup="Origin",
-    icon=folium.Icon(color="green", icon="home"),
-)
-
-# add marker for the destination
-m.add_marker(
-    location=(
-        user_infomration["lat_company"].values[0],
-        user_infomration["lon_company"].values[0],
-    ),
-    popup="Destination",
-    icon=folium.Icon(color="red", icon="flag"),
-)
-
-# add markers for each latitute and longitude in car_pool_user
-for data in car_pool_user.iterrows():
-    m.add_marker(
-        location=(data[1]["lat"], data[1]["lon"]),
-        popup=data[1]["first_name"]
-        + " "
-        + data[1]["last_name"]
-        + " "
-        + data[1]["address_company"],
-    )
-
-m.to_streamlit(scrolling=True)

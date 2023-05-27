@@ -30,22 +30,57 @@ st.set_page_config(
         "About": "https://www.github.com/nathanyaqueby/roadio/",
     },
 )
+hide_streamlit_style = """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+
+#roadio-your-all-encompassing-sustainable-route-planner > div > span
+{
+    text-align: center ;
+
+}
+#root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div > div:nth-child(6){
+    display: none;}
+</style>
+
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+st.header("Roadio: Your all-encompassing sustainable route planner")
+st.markdown(
+    """
+    <style>
+    #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4
+    {
+        max-width: 100%;
+        padding : 10px 10px 0px 30px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+hide_menu_style = """
+        <style>
+        #MainMenu {visibility: hidden;}
+        </style>
+        """
+st.markdown(hide_menu_style, unsafe_allow_html=True)
 
 add_logo("media/logo small.png", height=100)
 
 with open("config.yaml") as file:
     config = yaml.load(file, Loader=SafeLoader)
+with st.spinner(text="In progress..."):
+    authenticator = stauth.Authenticate(
+        config["credentials"],
+        config["cookie"]["name"],
+        config["cookie"]["key"],
+        config["cookie"]["expiry_days"],
+        config["preauthorized"],
+    )
 
-authenticator = stauth.Authenticate(
-    config["credentials"],
-    config["cookie"]["name"],
-    config["cookie"]["key"],
-    config["cookie"]["expiry_days"],
-    config["preauthorized"],
-)
-
-name, authentication_status, username = authenticator.login("Login", "main")
-user_data = pd.read_csv("data/people-with-companies-clean.csv")
+    name, authentication_status, username = authenticator.login("Login", "main")
+    user_data = pd.read_csv("data/people-with-companies-clean.csv")
 
 try:
     user_infomration = user_data.loc[
@@ -129,12 +164,9 @@ try:
         st.session_state["go_from"] = ""
         st.session_state["go_to"] = ""
 
-    ############ sidebar
+    ############ sidebar ############
 
     if st.session_state["authentication_status"]:
-        authenticator.logout("Logout", "main", key="unique_key")
-        st.write(f'Welcome *{st.session_state["name"]}*!')
-
         with st.sidebar:
             st.title("Generate your route")
             basemap = "Satellite"
@@ -188,10 +220,10 @@ try:
             col1, col2 = st.columns(2)
             with col1:
                 st.image("media/roadio icons - 1.png")
-                st.metric(label="CO2 emissions", value="0.5 kg")
+                st.metric(label="CO2 Emissions", value="0.5 kg")
             with col2:
                 st.image("media/roadio icons -2.png")
-                st.metric(label="Health Benifits", value=f"{value} %")
+                st.metric(label="Health Benefits", value=f"{value} %")
 
             optimizer = "Travel time"
 
@@ -203,9 +235,29 @@ try:
                 "Go to carpooling", type="secondary", use_container_width=True
             )
 
-        ############ main
+            st.markdown(
+                f"<p style='text-align: center; color: black;'>UserName:  {st.session_state['name']}</p>",
+                unsafe_allow_html=True,
+            )
+            authenticator.logout("Logout", "main", key="unique_key")
+            st.markdown(
+                """
+            <style>
+                #root > div:nth-child(1) > div.withScreencast > div > div > div > section.css-vk3wp9.e1fqkh3o11 > div.css-6qob1r.e1fqkh3o3 > div.css-e3xfei.e1fqkh3o4 > div > div:nth-child(1) > div > div:nth-child(8) > div > button                {
+                display:inline-block;   
+                position: absolute;
+                left:40%;
+                right:40%;
+                white-space: nowrap;
+                margin:0px auto;
+                text-align: center;
+                }
+            </style>
+    """,
+                unsafe_allow_html=True,
+            )
 
-        st.title("Roadio: Your all-encompassing sustainable route planner")
+        ############ main
 
         if optimizer == "Travel time":
             optimizer = "Time"
@@ -275,5 +327,5 @@ try:
         st.warning("Please enter your username and password")
 
 except Exception as e:
-    st.error(e)
+    # st.error(e)
     st.write("UserName or Password not found")

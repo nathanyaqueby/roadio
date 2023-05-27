@@ -20,7 +20,7 @@ pip install -r requirements.txt
 source venv/bin/activate
 # run app
 streamlit run 🏠_Home.py
-```
+´´´
 
 ## Run in Docker
 
@@ -29,5 +29,6 @@ streamlit run 🏠_Home.py
 docker build -t roadio .
 # run docker image
 docker run -p 8501:8501 roadio
-```
+´´´
+
 
