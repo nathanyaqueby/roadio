@@ -8,9 +8,25 @@ credentials:
       email: harikesavankrishnan@gmail.com
       name: Hari Kesavan
       password: $2b$12$IMT/UHmdqJyqV72tdiVCP.eTVE6mL19RqF16Pg/ThV8xMruc3zWq. # To be replaced with hashed password
+    linnet_willoughby:
+      email: linnet_willoughby@gmail.com
+      name: Linnet Willoughby
+      password: $2b$12$1OXeDoHxxOvpyvVRgUfjeuQ/zxJpPzph0.NOyoI9jW5fAKyR0I2zC
+    brad_pettis:
+      email: brad_pettis@gmail.com
+      name: Brad Pettis
+      password: $2b$12$imW3I4NK7wBh82LxFap0x..qTu4iwK2inlbCNO8hTvpqT.42IMJ6C   
+    gertrude_sarson:
+      email: stacy_mcquin@gmail.com
+      name: Gertrude Sarson
+      password: $2b$12$YC2nOXJ8L7R3t.4I9ngzlu3uS10tQAYv9WhPUE7VkNmu6NKDrpJXS
+    minni_narracott:
+      email: minni_narracott@gmail.com
+      name: Minni Narracott
+      password: $2b$12$rMu2b3vIzIvWIcKNZ76Q7.TtQcYAm9vneyGmL2CqKS0DAXl29/4zS
 cookie:
   expiry_days: 30
-  key: some_signature_key # Must be string
+  key: some_signature_key # Must be string 
   name: some_cookie_name
 preauthorized:
   emails:
