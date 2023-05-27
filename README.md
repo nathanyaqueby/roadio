@@ -1,6 +1,11 @@
 # Roadio
 Developed during the Hackaburg 2023 for Vitesco's challenge and the sustainable mobility track.
 
+Go to [http://34.255.207.2:8501/](http://34.255.207.2:8501/) to access our working prototype and log in as our (fake) user persona:
+
+**Username:** `brad_pettis` \
+**Password:** `1234`
+
 ![devpost thumbnail - hackaburg (1)](https://github.com/nathanyaqueby/roadio/assets/73829218/79210727-699d-4480-b675-a8d60bbaecfe)
 
 Instead of switching between multiple navigation apps for different purposes, we offer a convenient one-stop solution to access all types of navigation services to save time and effort. Introducing: **_Roadio_**, an all-encompassing mobility platform developed for [Vitesco](https://www.vitesco-technologies.com/en-us)'s Work Smarter & Sustainable challenge.
@@ -12,7 +17,7 @@ Instead of switching between multiple navigation apps for different purposes, we
 - Users can **carpool** using a fellow co-worker's vehicle on their way to the office or offer a ride and earn sustainability points.
 
 ## 💻 How we built it
-- Technologies: `Docker`, `Streamlit`, `React`, `Figma`, and of course, `StackOverflow`
+- Technologies: `AWS`, `Docker`, `Streamlit`, `React`, `Figma`,`Hostinger`, and of course, `StackOverflow`
 - Datasets: `Vitesco`'s sample dataset, `OpenStreetMap`'s API, and `World CO2 emissions` dataset
 - Languages: `Python`, `JavaScript`, `HTML/CSS`
 
